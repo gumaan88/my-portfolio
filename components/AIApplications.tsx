@@ -1,8 +1,12 @@
 import React from 'react';
-import { AI_SOLUTIONS } from '../constants';
+import { CONTENT } from '../constants';
 import { Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const AIApplications: React.FC = () => {
+  const { language } = useLanguage();
+  const t = CONTENT[language];
+
   return (
     <section id="ai-solutions" className="py-24 relative overflow-hidden">
       {/* Background glow */}
@@ -13,19 +17,19 @@ const AIApplications: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-electric-400 font-medium mb-2">
               <Sparkles size={18} />
-              <span>الثورة الصناعية الرابعة</span>
+              <span>{t.aiSolutions.badge}</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white">
-              تطبيقات <span className="text-electric-400">الذكاء الاصطناعي</span>
+              {t.aiSolutions.title}
             </h2>
           </div>
           <p className="text-gray-400 max-w-md text-sm md:text-base leading-relaxed">
-            حلول عملية وقابلة للتطبيق تعزز الإنتاجية وتحول البيانات الخام إلى قيمة ملموسة.
+            {t.aiSolutions.description}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {AI_SOLUTIONS.map((item, index) => (
+          {t.aiSolutions.items.map((item, index) => (
             <div 
               key={index} 
               className="group relative bg-gradient-to-br from-navy-800 to-navy-900 border border-white/5 p-8 rounded-2xl hover:border-electric-500/40 transition-all duration-500 overflow-hidden"
@@ -42,7 +46,7 @@ const AIApplications: React.FC = () => {
                   <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
                   <p className="text-gray-400 text-sm mb-4 leading-relaxed">{item.description}</p>
                   <div className="inline-block px-3 py-1 rounded-full bg-electric-900/30 border border-electric-500/20 text-electric-400 text-xs font-bold">
-                    الأثر: {item.impact}
+                    {t.aiSolutions.impactLabel}: {item.impact}
                   </div>
                 </div>
               </div>

@@ -1,21 +1,26 @@
 import React from 'react';
-import { PROJECTS } from '../constants';
-import { ArrowUpLeft } from 'lucide-react';
+import { CONTENT } from '../constants';
+import { ArrowUpLeft, ArrowUpRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Projects: React.FC = () => {
+  const { language, dir } = useLanguage();
+  const t = CONTENT[language];
+  const ArrowIcon = dir === 'rtl' ? ArrowUpLeft : ArrowUpRight;
+
   return (
     <section id="projects" className="py-24 bg-navy-950 border-y border-white/5">
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-white">أحدث <span className="text-electric-400">المشاريع</span></h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white">{t.projects.title}</h2>
           <a href="#" className="hidden md:flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
-            عرض كل الأعمال
-            <ArrowUpLeft size={16} />
+            {t.cta.allWork}
+            <ArrowIcon size={16} />
           </a>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {PROJECTS.map((project, index) => (
+          {t.projects.items.map((project, index) => (
             <div key={index} className="group rounded-2xl bg-navy-900 border border-white/5 overflow-hidden hover:border-white/20 transition-all duration-300 flex flex-col h-full">
               <div className="relative h-48 overflow-hidden">
                 <div className="absolute inset-0 bg-navy-900/20 group-hover:bg-transparent transition-colors z-10"></div>
@@ -24,7 +29,7 @@ const Projects: React.FC = () => {
                   alt={project.title} 
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
-                <div className="absolute top-4 right-4 z-20 bg-navy-900/80 backdrop-blur text-xs font-bold text-white px-3 py-1 rounded-full border border-white/10">
+                <div className={`absolute top-4 ${dir === 'rtl' ? 'right-4' : 'left-4'} z-20 bg-navy-900/80 backdrop-blur text-xs font-bold text-white px-3 py-1 rounded-full border border-white/10`}>
                   {project.category}
                 </div>
               </div>

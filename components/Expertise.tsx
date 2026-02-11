@@ -1,20 +1,26 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SERVICES } from '../constants';
+import { CONTENT } from '../constants';
+import { useLanguage } from '../context/LanguageContext';
 
 const Expertise: React.FC = () => {
+  const { language } = useLanguage();
+  const t = CONTENT[language];
+
   return (
     <section id="expertise" className="py-24 relative bg-navy-900/50">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">مجالات <span className="text-electric-400">الخبرة</span></h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            {t.expertise.title}
+          </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            مزيج فريد من الخبرات يجمع بين البنية التحتية الصلبة والمرونة البرمجية والذكاء الاصطناعي.
+            {t.expertise.subtitle}
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {SERVICES.map((service, index) => (
+          {t.expertise.items.map((service, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}

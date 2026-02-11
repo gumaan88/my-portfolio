@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Terminal } from 'lucide-react';
-import { NAV_ITEMS } from '../constants';
+import { Menu, X, Terminal, Globe } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { CONTENT } from '../constants';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { language, toggleLanguage, dir } = useLanguage();
+  const t = CONTENT[language];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +22,7 @@ const Navbar: React.FC = () => {
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled ? 'bg-navy-900/80 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'
       }`}
+      dir={dir}
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
@@ -27,14 +31,16 @@ const Navbar: React.FC = () => {
             <Terminal className="text-electric-400 w-6 h-6" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-white leading-none">م. جمعان سعيد</span>
-            <span className="text-xs text-gray-400">مستشار تقني</span>
+            <span className="text-xl font-bold text-white leading-none">
+              {language === 'ar' ? 'م. جمعان سعيد' : 'Eng. Jamaan'}
+            </span>
+            <span className="text-xs text-gray-400">{t.hero.role}</span>
           </div>
         </a>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-8 items-center">
-          {NAV_ITEMS.map((item) => (
+          {t.nav.map((item) => (
             <a 
               key={item.label} 
               href={item.href}
@@ -44,27 +50,44 @@ const Navbar: React.FC = () => {
               <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-electric-400 transition-all duration-300 group-hover:w-full"></span>
             </a>
           ))}
+          
+          <button 
+            onClick={toggleLanguage}
+            className="p-2 text-gray-400 hover:text-white transition-colors"
+            title="Switch Language"
+          >
+            <Globe size={20} />
+          </button>
+
           <a 
             href="#contact"
             className="px-5 py-2.5 rounded-full bg-electric-600 hover:bg-electric-500 text-white text-sm font-semibold transition-all hover:shadow-[0_0_20px_rgba(8,145,178,0.4)]"
           >
-            اطلب استشارة
+            {t.cta.consult}
           </a>
         </div>
 
         {/* Mobile Toggle */}
-        <button 
-          className="md:hidden text-gray-300 hover:text-white"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X /> : <Menu />}
-        </button>
+        <div className="flex md:hidden items-center gap-4">
+          <button 
+            onClick={toggleLanguage}
+            className="text-gray-400 hover:text-white"
+          >
+            <Globe size={20} />
+          </button>
+          <button 
+            className="text-gray-300 hover:text-white"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-navy-900/95 backdrop-blur-xl border-b border-white/10 p-6 flex flex-col gap-4 shadow-2xl">
-          {NAV_ITEMS.map((item) => (
+          {t.nav.map((item) => (
             <a 
               key={item.label} 
               href={item.href}
@@ -79,7 +102,7 @@ const Navbar: React.FC = () => {
             onClick={() => setIsOpen(false)}
             className="mt-4 w-full text-center px-5 py-3 rounded-lg bg-electric-600 text-white font-semibold"
           >
-            اطلب استشارة
+            {t.cta.consult}
           </a>
         </div>
       )}

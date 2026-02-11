@@ -1,19 +1,36 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
-import { SOCIAL_LINKS } from '../constants';
+import { SOCIAL_LINKS, CONTENT } from '../constants';
+import { useLanguage } from '../context/LanguageContext';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
+import ServiceRating from './ServiceRating';
 
 const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const { language, dir } = useLanguage();
+  const t = CONTENT[language];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    try {
+      await addDoc(collection(db, 'messages'), {
+        ...formState,
+        createdAt: serverTimestamp(),
+        read: false
+      });
+      setSubmitted(true);
+      setFormState({ name: '', email: '', message: '' });
+    } catch (error) {
+      console.error("Error sending message", error);
+      alert("Error sending message. Please try again.");
+    }
+    
     setIsSubmitting(false);
-    setSubmitted(true);
   };
 
   return (
@@ -21,9 +38,9 @@ const Contact: React.FC = () => {
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">لنبدأ <span className="text-electric-400">العمل معاً</span></h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.contact.title}</h2>
             <p className="text-gray-400">
-              هل لديك مشروع طموح؟ أنا مستعد للمساعدة في تحويل أفكارك إلى واقع تقني ملموس.
+              {t.contact.description}
             </p>
           </div>
 
@@ -31,7 +48,7 @@ const Contact: React.FC = () => {
             {/* Social & Info */}
             <div className="md:col-span-2 space-y-8 p-6">
               <div>
-                <h3 className="text-white font-bold text-xl mb-6">قنوات التواصل</h3>
+                <h3 className="text-white font-bold text-xl mb-6">{t.contact.channels}</h3>
                 <div className="flex flex-col gap-4">
                   {SOCIAL_LINKS.map((link) => (
                     <a 
@@ -46,12 +63,7 @@ const Contact: React.FC = () => {
                 </div>
               </div>
               
-              <div className="p-6 rounded-xl bg-electric-900/10 border border-electric-500/10">
-                <p className="text-electric-400 text-sm leading-relaxed">
-                  "التكنولوجيا ليست مجرد أدوات، بل هي الطريقة التي نبني بها مستقبلاً أفضل وأكثر كفاءة."
-                </p>
-                <div className="mt-4 text-gray-500 text-xs font-bold">- م. جمعان سعيد</div>
-              </div>
+              <ServiceRating />
             </div>
 
             {/* Form */}
@@ -61,45 +73,45 @@ const Contact: React.FC = () => {
                   <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mb-4">
                     <Send size={32} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">تم الإرسال بنجاح</h3>
-                  <p className="text-gray-400">شكراً لتواصلك. سأقوم بالرد عليك في أقرب وقت ممكن.</p>
+                  <h3 className="text-2xl font-bold text-white mb-2">{t.cta.sent}</h3>
+                  <p className="text-gray-400">{t.cta.sentMsg}</p>
                   <button onClick={() => setSubmitted(false)} className="mt-6 text-electric-400 hover:text-electric-300 text-sm">
-                    إرسال رسالة أخرى
+                    {t.cta.sendAnother}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-gray-400 text-sm mb-2">الاسم الكامل</label>
+                    <label className="block text-gray-400 text-sm mb-2">{t.cta.name}</label>
                     <input 
                       type="text" 
                       required
                       value={formState.name}
                       onChange={e => setFormState({...formState, name: e.target.value})}
                       className="w-full bg-navy-900 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-electric-500/50 focus:ring-1 focus:ring-electric-500/50 transition-all"
-                      placeholder="أدخل اسمك"
+                      placeholder={t.cta.namePlaceholder}
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400 text-sm mb-2">البريد الإلكتروني</label>
+                    <label className="block text-gray-400 text-sm mb-2">{t.cta.email}</label>
                     <input 
                       type="email" 
                       required
                       value={formState.email}
                       onChange={e => setFormState({...formState, email: e.target.value})}
                       className="w-full bg-navy-900 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-electric-500/50 focus:ring-1 focus:ring-electric-500/50 transition-all"
-                      placeholder="email@example.com"
+                      placeholder={t.cta.emailPlaceholder}
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400 text-sm mb-2">الرسالة</label>
+                    <label className="block text-gray-400 text-sm mb-2">{t.cta.message}</label>
                     <textarea 
                       rows={4}
                       required
                       value={formState.message}
                       onChange={e => setFormState({...formState, message: e.target.value})}
                       className="w-full bg-navy-900 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-electric-500/50 focus:ring-1 focus:ring-electric-500/50 transition-all resize-none"
-                      placeholder="كيف يمكنني مساعدتك؟"
+                      placeholder={t.cta.messagePlaceholder}
                     ></textarea>
                   </div>
                   <button 
@@ -107,8 +119,8 @@ const Contact: React.FC = () => {
                     disabled={isSubmitting}
                     className="w-full bg-electric-600 hover:bg-electric-500 text-white font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-electric-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'جاري الإرسال...' : 'إرسال الرسالة'}
-                    {!isSubmitting && <Send size={18} className="rtl:rotate-180" />}
+                    {isSubmitting ? t.cta.sending : t.cta.send}
+                    {!isSubmitting && <Send size={18} className={dir === 'rtl' ? "rotate-180" : ""} />}
                   </button>
                 </form>
               )}

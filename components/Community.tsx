@@ -1,7 +1,12 @@
 import React from 'react';
 import { Mic2, Users, Award } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { CONTENT } from '../constants';
 
 const Community: React.FC = () => {
+  const { language } = useLanguage();
+  const t = CONTENT[language];
+
   return (
     <section id="community" className="py-24 relative">
       <div className="container mx-auto px-6">
@@ -12,10 +17,10 @@ const Community: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                المشاركة <span className="text-electric-400">المجتمعية</span>
+                {t.community.title}
               </h2>
               <p className="text-gray-300 mb-8 leading-relaxed">
-                أؤمن بأن المعرفة تنمو بالمشاركة. أحرص دائماً على التواجد في الفعاليات التقنية ونقل الخبرات للمجتمع التقني العربي.
+                {t.community.description}
               </p>
 
               <div className="space-y-6">
@@ -24,8 +29,8 @@ const Community: React.FC = () => {
                     <Mic2 size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">متحدث تقني</h4>
-                    <p className="text-gray-400 text-sm">مشاركة دورية في مؤتمرات التحول الرقمي والذكاء الاصطناعي.</p>
+                    <h4 className="text-white font-bold text-lg">{t.community.role1}</h4>
+                    <p className="text-gray-400 text-sm">{t.community.desc1}</p>
                   </div>
                 </div>
                 
@@ -34,8 +39,8 @@ const Community: React.FC = () => {
                     <Users size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">ورش عمل تدريبية</h4>
-                    <p className="text-gray-400 text-sm">تقديم ورش عمل في هندسة الشبكات (MikroTik) وتطوير الأنظمة.</p>
+                    <h4 className="text-white font-bold text-lg">{t.community.role2}</h4>
+                    <p className="text-gray-400 text-sm">{t.community.desc2}</p>
                   </div>
                 </div>
 
@@ -44,8 +49,8 @@ const Community: React.FC = () => {
                     <Award size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">مساهمات مفتوحة المصدر</h4>
-                    <p className="text-gray-400 text-sm">نشر أدوات وسكربتات مفيدة على GitHub لمجتمع المطورين.</p>
+                    <h4 className="text-white font-bold text-lg">{t.community.role3}</h4>
+                    <p className="text-gray-400 text-sm">{t.community.desc3}</p>
                   </div>
                 </div>
               </div>
@@ -66,7 +71,7 @@ const Community: React.FC = () => {
                 </div>
               </div>
               <div className="mt-4 flex gap-4 text-sm text-gray-500">
-                <span>📍 الرياض، المملكة العربية السعودية</span>
+                <span>📍 {t.community.location}</span>
                 <span>📅 2024</span>
               </div>
             </div>
