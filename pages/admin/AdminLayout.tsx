@@ -16,8 +16,8 @@ const AdminLayout = () => {
     { label: 'لوحة القيادة', path: '/admin', icon: LayoutDashboard },
     { label: 'الرسائل', path: '/admin/messages', icon: MessageSquare },
     { label: 'إدارة التعليقات', path: '/admin/comments', icon: MessageCircle },
-    { label: 'إدارة المحتوى', path: '/admin/content', icon: FileText },
-    { label: 'الإعدادات', path: '/admin/settings', icon: Settings },
+    { label: 'إدارة المشاريع', path: '/admin/content', icon: FileText },
+    { label: 'الإعدادات العامة', path: '/admin/settings', icon: Settings },
   ];
 
   return (

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import { SOCIAL_LINKS, CONTENT } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import ServiceRating from './ServiceRating';
 
@@ -10,8 +10,25 @@ const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [dynamicLinks, setDynamicLinks] = useState<{[key: string]: string}>({});
+  
   const { language, dir } = useLanguage();
   const t = CONTENT[language];
+
+  // Fetch dynamic links
+  useEffect(() => {
+    const fetchLinks = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'settings', 'socials'));
+        if (docSnap.exists()) {
+          setDynamicLinks(docSnap.data() as any);
+        }
+      } catch (e) {
+        console.error("Error fetching links", e);
+      }
+    };
+    fetchLinks();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,16 +67,22 @@ const Contact: React.FC = () => {
               <div>
                 <h3 className="text-white font-bold text-xl mb-6">{t.contact.channels}</h3>
                 <div className="flex flex-col gap-4">
-                  {SOCIAL_LINKS.map((link) => (
-                    <a 
-                      key={link.platform}
-                      href={link.url}
-                      className="flex items-center gap-4 text-gray-400 hover:text-white transition-colors p-3 rounded-lg hover:bg-white/5"
-                    >
-                      <link.icon size={20} className="text-electric-500" />
-                      <span>{link.platform}</span>
-                    </a>
-                  ))}
+                  {SOCIAL_LINKS.map((link) => {
+                    // Use dynamic URL if available, else fallback to constant
+                    const url = dynamicLinks[link.platform] || link.url;
+                    return (
+                      <a 
+                        key={link.platform}
+                        href={url}
+                        target={url.startsWith('http') ? '_blank' : undefined}
+                        rel="noreferrer"
+                        className="flex items-center gap-4 text-gray-400 hover:text-white transition-colors p-3 rounded-lg hover:bg-white/5"
+                      >
+                        <link.icon size={20} className="text-electric-500" />
+                        <span>{link.platform}</span>
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
               

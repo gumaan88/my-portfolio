@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, getCountFromServer, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, getCountFromServer, query, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { BarChart3, MessageSquare, Users, Eye } from 'lucide-react';
 
@@ -26,27 +26,37 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Counts
-      const msgColl = collection(db, 'messages');
-      const commentsColl = collection(db, 'comments');
-      const msgCount = await getCountFromServer(msgColl);
-      const commentsCount = await getCountFromServer(commentsColl);
-      
-      // Get Analytics
-      // Note: Real "Views" would require a page view counter implementation in the public app
-      // Assuming 'analytics/general' doc exists or defaulting
-      
-      setStats({
-        messages: msgCount.data().count,
-        comments: commentsCount.data().count,
-        views: 1205, // Simulated for demo
-        rating: 4.8 // Simulated or fetched from analytics/ratings
-      });
+      try {
+        // 1. Messages Count
+        const msgColl = collection(db, 'messages');
+        const msgCount = await getCountFromServer(msgColl);
 
-      // Recent Messages
-      const q = query(msgColl, orderBy('createdAt', 'desc'), limit(5));
-      const msgSnapshot = await getDocs(q);
-      setRecentMessages(msgSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()})));
+        // 2. Comments Count
+        const commentsColl = collection(db, 'comments');
+        const commentsCount = await getCountFromServer(commentsColl);
+        
+        // 3. Views Count
+        const viewsDoc = await getDoc(doc(db, 'analytics', 'views'));
+        const views = viewsDoc.exists() ? viewsDoc.data().count : 0;
+
+        // 4. Ratings
+        const ratingsDoc = await getDoc(doc(db, 'analytics', 'ratings'));
+        const rating = ratingsDoc.exists() ? ratingsDoc.data().average.toFixed(1) : 0;
+        
+        setStats({
+          messages: msgCount.data().count,
+          comments: commentsCount.data().count,
+          views: views,
+          rating: rating
+        });
+
+        // 5. Recent Messages
+        const q = query(msgColl, orderBy('createdAt', 'desc'), limit(5));
+        const msgSnapshot = await getDocs(q);
+        setRecentMessages(msgSnapshot.docs.map(doc => ({id: doc.id, ...doc.data()})));
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
     };
 
     fetchData();
@@ -60,7 +70,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="إجمالي الرسائل" value={stats.messages} icon={MessageSquare} color="electric" />
         <StatCard title="التعليقات" value={stats.comments} icon={Users} color="green" />
-        <StatCard title="الزيارات (تجريبي)" value={stats.views} icon={Eye} color="blue" />
+        <StatCard title="الزيارات" value={stats.views} icon={Eye} color="blue" />
         <StatCard title="التقييم العام" value={stats.rating} icon={BarChart3} color="yellow" />
       </div>
 
@@ -86,14 +96,17 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <div className="bg-navy-800 rounded-xl border border-white/5 p-6">
-          <h3 className="text-lg font-bold text-white mb-4">إجراءات سريعة</h3>
+          <h3 className="text-lg font-bold text-white mb-4">روابط سريعة</h3>
           <div className="space-y-3">
-            <button className="w-full p-3 bg-navy-900 hover:bg-navy-700 text-gray-300 rounded-lg text-right transition-colors">
+            <a href="/admin/content" className="block w-full p-3 bg-navy-900 hover:bg-navy-700 text-electric-400 rounded-lg text-right transition-colors">
               + إضافة مشروع جديد
-            </button>
-            <button className="w-full p-3 bg-navy-900 hover:bg-navy-700 text-gray-300 rounded-lg text-right transition-colors">
-              + تحديث حالة "متاح للعمل"
-            </button>
+            </a>
+            <a href="/admin/messages" className="block w-full p-3 bg-navy-900 hover:bg-navy-700 text-gray-300 rounded-lg text-right transition-colors">
+              عرض كل الرسائل
+            </a>
+            <a href="/admin/settings" className="block w-full p-3 bg-navy-900 hover:bg-navy-700 text-gray-300 rounded-lg text-right transition-colors">
+              تحديث روابط التواصل
+            </a>
           </div>
         </div>
       </div>
