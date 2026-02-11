@@ -51,15 +51,17 @@ export const CONTENT = {
     },
     hero: {
       status: 'متاح للمشاريع والاستشارات',
-      role: ' استشاري التحول الرقمي',
+      role: 'مستشار تقني',
       titleHighlight: 'الذكاء الاصطناعي',
       titlePart1: 'تطبيقات',
       titlePart2: 'والبنية الرقمية المتقدمة',
       description: 'أساعد المؤسسات على تبني المستقبل من خلال دمج حلول الذكاء الاصطناعي، تأمين البنية التحتية للشبكات، وأتمتة العمليات الرقمية لتحقيق أقصى كفاءة.',
-      badge1Title: 'AI',
-      badge1Sub: 'Applied AI',
-      badge2Title: 'Cert. Engineer',
-      badge2Sub: 'MikroTik'
+      badge1Title: 'خبير ذكاء اصطناعي',
+      badge1Sub: 'Neural Networks',
+      badge2Title: 'مهندس معتمد',
+      badge2Sub: 'MikroTik',
+      badge3Title: 'أتمتة العمليات',
+      badge3Sub: 'n8n Automation'
     },
     expertise: {
       title: 'مجالات الخبرة',
@@ -157,12 +159,26 @@ export const CONTENT = {
     community: {
       title: 'المشاركة المجتمعية',
       description: 'أؤمن بأن المعرفة تنمو بالمشاركة. أحرص دائماً على التواجد في الفعاليات التقنية ونقل الخبرات للمجتمع التقني.',
-      role1: 'متحدث تقني',
-      desc1: 'مشاركة دورية في مؤتمرات التحول الرقمي والذكاء الاصطناعي.',
-      role2: 'ورش عمل تدريبية',
-      desc2: 'تقديم ورش عمل في هندسة الشبكات (MikroTik) وتطوير الأنظمة.',
-      role3: 'مساهمات مفتوحة المصدر',
-      desc3: 'نشر أدوات وسكربتات مفيدة على GitHub لمجتمع المطورين.',
+      roles: [
+        {
+          id: '1',
+          iconName: 'Mic2',
+          title: { ar: 'متحدث تقني', en: 'Tech Speaker' },
+          description: { ar: 'مشاركة دورية في مؤتمرات التحول الرقمي والذكاء الاصطناعي.', en: 'Regular participation in digital transformation and AI conferences.' }
+        },
+        {
+          id: '2',
+          iconName: 'Users',
+          title: { ar: 'ورش عمل تدريبية', en: 'Training Workshops' },
+          description: { ar: 'تقديم ورش عمل في هندسة الشبكات (MikroTik) وتطوير الأنظمة.', en: 'Delivering workshops on Network Engineering (MikroTik) and System Development.' }
+        },
+        {
+          id: '3',
+          iconName: 'Code',
+          title: { ar: 'مساهمات مفتوحة المصدر', en: 'Open Source Contributions' },
+          description: { ar: 'نشر أدوات وسكربتات مفيدة على GitHub لمجتمع المطورين.', en: 'Publishing useful tools and scripts on GitHub for the developer community.' }
+        }
+      ],
       location: 'الرياض، المملكة العربية السعودية'
     },
     contact: {
@@ -212,7 +228,9 @@ export const CONTENT = {
       badge1Title: 'AI Expert',
       badge1Sub: 'Neural Networks',
       badge2Title: 'Cert. Engineer',
-      badge2Sub: 'MikroTik'
+      badge2Sub: 'MikroTik',
+      badge3Title: 'Automation',
+      badge3Sub: 'n8n Automation'
     },
     expertise: {
       title: 'Areas of Expertise',
@@ -310,12 +328,26 @@ export const CONTENT = {
     community: {
       title: 'Community Engagement',
       description: 'I believe knowledge grows by sharing. I actively participate in tech events and transfer expertise to the tech community.',
-      role1: 'Tech Speaker',
-      desc1: 'Regular participation in digital transformation and AI conferences.',
-      role2: 'Training Workshops',
-      desc2: 'Delivering workshops on Network Engineering (MikroTik) and System Development.',
-      role3: 'Open Source Contributions',
-      desc3: 'Publishing useful tools and scripts on GitHub for the developer community.',
+      roles: [
+        {
+          id: '1',
+          iconName: 'Mic2',
+          title: { ar: 'متحدث تقني', en: 'Tech Speaker' },
+          description: { ar: 'مشاركة دورية في مؤتمرات التحول الرقمي والذكاء الاصطناعي.', en: 'Regular participation in digital transformation and AI conferences.' }
+        },
+        {
+          id: '2',
+          iconName: 'Users',
+          title: { ar: 'ورش عمل تدريبية', en: 'Training Workshops' },
+          description: { ar: 'تقديم ورش عمل في هندسة الشبكات (MikroTik) وتطوير الأنظمة.', en: 'Delivering workshops on Network Engineering (MikroTik) and System Development.' }
+        },
+        {
+          id: '3',
+          iconName: 'Code',
+          title: { ar: 'مساهمات مفتوحة المصدر', en: 'Open Source Contributions' },
+          description: { ar: 'نشر أدوات وسكربتات مفيدة على GitHub لمجتمع المطورين.', en: 'Publishing useful tools and scripts on GitHub for the developer community.' }
+        }
+      ],
       location: 'Riyadh, Saudi Arabia'
     },
     contact: {

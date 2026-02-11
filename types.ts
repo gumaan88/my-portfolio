@@ -76,14 +76,24 @@ export interface HeroContent {
   description: { ar: string; en: string };
   status: { ar: string; en: string };
   image: string;
+  // Badges
+  badge1Title?: { ar: string; en: string };
+  badge1Sub?: { ar: string; en: string };
+  badge2Title?: { ar: string; en: string };
+  badge2Sub?: { ar: string; en: string };
+  badge3Title?: { ar: string; en: string };
+  badge3Sub?: { ar: string; en: string };
+}
+
+export interface CommunityRole {
+  id: string;
+  title: { ar: string; en: string };
+  description: { ar: string; en: string };
+  iconName: string;
 }
 
 export interface CommunityContent {
   title: { ar: string; en: string };
   description: { ar: string; en: string };
-  roles: {
-    role1: { title: { ar: string; en: string }, desc: { ar: string; en: string } };
-    role2: { title: { ar: string; en: string }, desc: { ar: string; en: string } };
-    role3: { title: { ar: string; en: string }, desc: { ar: string; en: string } };
-  }
+  roles: CommunityRole[];
 }

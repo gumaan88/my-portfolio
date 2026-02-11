@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Download, Cpu, Activity, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, Cpu, Activity, Zap, Workflow } from 'lucide-react';
 import { HERO_IMAGE_URL, CONTENT } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
 import { doc, getDoc } from 'firebase/firestore';
@@ -177,8 +177,8 @@ const Hero: React.FC = () => {
                </div>
 
                {/* --- FLOATING BADGES (Responsive) --- */}
-               {/* Badge 1: AI CORE */}
-               {/* Desktop: Top Corner. Mobile: Middle Side to avoid face. */}
+               
+               {/* Badge 1: AI CORE (Top Start) */}
                <motion.div 
                   animate={{ y: [0, -15, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -187,21 +187,20 @@ const Hero: React.FC = () => {
                     rounded-xl md:rounded-2xl p-2 md:p-4 
                     min-w-[120px] md:min-w-[140px]
                     scale-75 md:scale-100 origin-center
-                    /* Mobile Positioning: Approx 55% from top to clear face */
+                    /* Approx 55% from top to clear face on mobile */
                     top-[55%] md:top-10 
-                    /* RTL/LTR Logic */
+                    /* Start Side */
                     ${dir === 'rtl' ? '-right-4 md:-right-8' : '-left-4 md:-left-8'}
                   `}
                >
                   <div className="flex items-center gap-2 md:gap-3 mb-1">
                      <div className="p-1.5 md:p-2 bg-electric-500/20 rounded-lg text-electric-400"><Cpu size={18} /></div>
-                     <span className="text-electric-400 text-[10px] md:text-xs font-bold tracking-wider">APPLIED AI</span>
+                     <span className="text-electric-400 text-[10px] md:text-xs font-bold tracking-wider">{getStr('badge1Title')?.toUpperCase()}</span>
                   </div>
-                  <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge1Sub}</div>
+                  <div className="text-white text-xs md:text-sm font-bold">{getStr('badge1Sub')}</div>
                </motion.div>
 
-               {/* Badge 2: NETWORK */}
-               {/* Desktop: Bottom Corner. Mobile: Bottom Corner. */}
+               {/* Badge 2: NETWORK (Bottom End) */}
                <motion.div 
                   animate={{ y: [0, 15, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
@@ -211,16 +210,39 @@ const Hero: React.FC = () => {
                     min-w-[120px] md:min-w-[140px]
                     scale-75 md:scale-100 origin-center
                     bottom-0 md:bottom-20
-                    /* RTL/LTR Logic: Opposite side of Badge 1 */
+                    /* End Side */
                     ${dir === 'rtl' ? '-left-4 md:-left-8' : '-right-4 md:-right-8'}
                   `}
                >
                   <div className="flex items-center gap-2 md:gap-3 mb-1">
                      <div className="p-1.5 md:p-2 bg-blue-500/20 rounded-lg text-blue-400"><Zap size={18} /></div>
-                     <span className="text-blue-400 text-[10px] md:text-xs font-bold tracking-wider">NETWORK</span>
+                     <span className="text-blue-400 text-[10px] md:text-xs font-bold tracking-wider">{getStr('badge2Title')?.toUpperCase()}</span>
                   </div>
-                  <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge2Sub}</div>
+                  <div className="text-white text-xs md:text-sm font-bold">{getStr('badge2Sub')}</div>
                </motion.div>
+
+               {/* Badge 3: AUTOMATION (Bottom Start - NEW) */}
+               <motion.div 
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                  className={`
+                    absolute z-20 bg-navy-800/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] 
+                    rounded-xl md:rounded-2xl p-2 md:p-4 
+                    min-w-[120px] md:min-w-[140px]
+                    scale-75 md:scale-100 origin-center
+                    /* Positioned lower left/right to balance the composition */
+                    bottom-10 md:bottom-10
+                    /* Start Side (Same as Badge 1) */
+                    ${dir === 'rtl' ? '-right-4 md:-right-8' : '-left-4 md:-left-8'}
+                  `}
+               >
+                  <div className="flex items-center gap-2 md:gap-3 mb-1">
+                     <div className="p-1.5 md:p-2 bg-fuchsia-500/20 rounded-lg text-fuchsia-400"><Workflow size={18} /></div>
+                     <span className="text-fuchsia-400 text-[10px] md:text-xs font-bold tracking-wider">{getStr('badge3Title')?.toUpperCase()}</span>
+                  </div>
+                  <div className="text-white text-xs md:text-sm font-bold">{getStr('badge3Sub')}</div>
+               </motion.div>
+
             </div>
           </motion.div>
         </div>

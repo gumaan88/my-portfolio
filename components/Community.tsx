@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Mic2, Users, Award } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { CONTENT } from '../constants';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { CommunityContent } from '../types';
+import { getIcon } from '../utils/iconMapper';
 
 const Community: React.FC = () => {
   const { language } = useLanguage();
@@ -17,11 +17,16 @@ const Community: React.FC = () => {
         const docSnap = await getDoc(doc(db, 'content', 'community'));
         if (docSnap.exists()) {
           setData(docSnap.data() as CommunityContent);
+        } else {
+            // Fallback if not in DB yet
+            setData(t.community as unknown as CommunityContent);
         }
       } catch (e) { console.error(e); }
     };
     fetchCommunity();
-  }, []);
+  }, [language]);
+
+  const displayData = data || t.community as unknown as CommunityContent;
 
   return (
     <section id="community" className="py-24 relative">
@@ -33,42 +38,31 @@ const Community: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                {data ? data.title[language] : t.community.title}
+                {displayData.title[language]}
               </h2>
               <p className="text-gray-300 mb-8 leading-relaxed">
-                {data ? data.description[language] : t.community.description}
+                {displayData.description[language]}
               </p>
 
               <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-electric-400 shrink-0">
-                    <Mic2 size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold text-lg">{data ? data.roles.role1.title[language] : t.community.role1}</h4>
-                    <p className="text-gray-400 text-sm">{data ? data.roles.role1.desc[language] : t.community.desc1}</p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-electric-400 shrink-0">
-                    <Users size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold text-lg">{data ? data.roles.role2.title[language] : t.community.role2}</h4>
-                    <p className="text-gray-400 text-sm">{data ? data.roles.role2.desc[language] : t.community.desc2}</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-electric-400 shrink-0">
-                    <Award size={20} />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold text-lg">{data ? data.roles.role3.title[language] : t.community.role3}</h4>
-                    <p className="text-gray-400 text-sm">{data ? data.roles.role3.desc[language] : t.community.desc3}</p>
-                  </div>
-                </div>
+                {displayData.roles && displayData.roles.map((role: any, idx: number) => {
+                   const Icon = getIcon(role.iconName);
+                   return (
+                    <div key={idx} className="flex gap-4 group">
+                        <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-electric-400 shrink-0 group-hover:scale-110 transition-transform group-hover:bg-electric-600/20">
+                            <Icon size={20} />
+                        </div>
+                        <div>
+                            <h4 className="text-white font-bold text-lg group-hover:text-electric-400 transition-colors">
+                                {role.title[language]}
+                            </h4>
+                            <p className="text-gray-400 text-sm">
+                                {role.description[language]}
+                            </p>
+                        </div>
+                    </div>
+                   )
+                })}
               </div>
             </div>
 
@@ -88,7 +82,7 @@ const Community: React.FC = () => {
               </div>
               <div className="mt-4 flex gap-4 text-sm text-gray-500">
                 <span>📍 {t.community.location}</span>
-                <span>📅 2024</span>
+                <span>📅 {new Date().getFullYear()}</span>
               </div>
             </div>
           </div>

@@ -20,7 +20,7 @@ const Content = () => {
 
   // --- Modal/Editing States ---
   const [isEditing, setIsEditing] = useState(false);
-  const [editType, setEditType] = useState<'project' | 'expertise' | 'ai' | null>(null);
+  const [editType, setEditType] = useState<'project' | 'expertise' | 'ai' | 'communityRole' | null>(null);
   const [currentItem, setCurrentItem] = useState<any>(null);
   const [tagInput, setTagInput] = useState(''); // State for adding new tags
 
@@ -43,7 +43,14 @@ const Content = () => {
             titlePart2: { ar: CONTENT.ar.hero.titlePart2, en: CONTENT.en.hero.titlePart2 },
             description: { ar: CONTENT.ar.hero.description, en: CONTENT.en.hero.description },
             status: { ar: CONTENT.ar.hero.status, en: CONTENT.en.hero.status },
-            image: "https://alawn.org/Uploads/Persons/51f4c8ca-90c5-42fd-818b-f675bacf21f0.png"
+            image: "https://alawn.org/Uploads/Persons/51f4c8ca-90c5-42fd-818b-f675bacf21f0.png",
+            // Fallback for new badges
+            badge1Title: { ar: 'خبير ذكاء اصطناعي', en: 'AI Expert' },
+            badge1Sub: { ar: 'Neural Networks', en: 'Neural Networks' },
+            badge2Title: { ar: 'مهندس معتمد', en: 'Cert. Engineer' },
+            badge2Sub: { ar: 'MikroTik', en: 'MikroTik' },
+            badge3Title: { ar: 'أتمتة العمليات', en: 'Automation' },
+            badge3Sub: { ar: 'n8n Automation', en: 'n8n Automation' },
         };
         setHeroData(defaultHero);
       }
@@ -62,18 +69,16 @@ const Content = () => {
 
       // 5. Community
       const commSnap = await getDoc(doc(db, 'content', 'community'));
-      if (commSnap.exists()) setCommunityData(commSnap.data() as CommunityContent);
-      else {
+      if (commSnap.exists()) {
+          setCommunityData(commSnap.data() as CommunityContent);
+      } else {
+          // Initialize with default array structure
           const defaultComm = {
               title: { ar: CONTENT.ar.community.title, en: CONTENT.en.community.title },
               description: { ar: CONTENT.ar.community.description, en: CONTENT.en.community.description },
-              roles: {
-                  role1: { title: { ar: CONTENT.ar.community.role1, en: CONTENT.en.community.role1 }, desc: { ar: CONTENT.ar.community.desc1, en: CONTENT.en.community.desc1 }},
-                  role2: { title: { ar: CONTENT.ar.community.role2, en: CONTENT.en.community.role2 }, desc: { ar: CONTENT.ar.community.desc2, en: CONTENT.en.community.desc2 }},
-                  role3: { title: { ar: CONTENT.ar.community.role3, en: CONTENT.en.community.role3 }, desc: { ar: CONTENT.ar.community.desc3, en: CONTENT.en.community.desc3 }}
-              }
+              roles: CONTENT.ar.community.roles // Using the array structure from constants
           };
-          setCommunityData(defaultComm);
+          setCommunityData(defaultComm as unknown as CommunityContent);
       }
 
     } catch (e) {
@@ -100,11 +105,48 @@ const Content = () => {
     showNotification('تم تحديث قسم المجتمع');
   };
 
+  const handleCommunityRoleDelete = async (roleId: string) => {
+      if(!communityData || !window.confirm('هل أنت متأكد من حذف هذا الدور؟')) return;
+      
+      const updatedRoles = communityData.roles.filter(r => r.id !== roleId);
+      const updatedData = { ...communityData, roles: updatedRoles };
+      setCommunityData(updatedData);
+      
+      // Auto save to DB
+      await setDoc(doc(db, 'content', 'community'), updatedData);
+      showNotification('تم حذف الدور');
+  };
+
   const handleModalSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editType || !currentItem) return;
 
     try {
+        if (editType === 'communityRole') {
+            // Logic for array-based community roles
+            if (!communityData) return;
+            
+            let updatedRoles = [...(communityData.roles || [])];
+            
+            if (currentItem.id) {
+                // Update existing
+                updatedRoles = updatedRoles.map(r => r.id === currentItem.id ? currentItem : r);
+            } else {
+                // Add new
+                const newRole = { ...currentItem, id: Date.now().toString() };
+                updatedRoles.push(newRole);
+            }
+            
+            const updatedData = { ...communityData, roles: updatedRoles };
+            setCommunityData(updatedData);
+            await setDoc(doc(db, 'content', 'community'), updatedData);
+            
+            setIsEditing(false);
+            showNotification('تم تحديث الأدوار بنجاح');
+            return;
+        }
+
+        // Logic for Collections (Projects, Expertise, AI)
         let collPath = '';
         if (editType === 'project') collPath = 'projects';
         else if (editType === 'expertise') collPath = 'content/expertise/items';
@@ -179,6 +221,7 @@ const Content = () => {
               <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                       <h3 className="text-electric-400 text-sm font-bold uppercase border-b border-white/5 pb-2 mb-4">النصوص (عربي)</h3>
+                      {/* Main Texts */}
                       <input 
                         className="w-full bg-navy-900 border border-white/10 rounded-lg p-3 text-white"
                         placeholder="العنوان الجزء 1"
@@ -212,6 +255,7 @@ const Content = () => {
                   </div>
                   <div className="space-y-4">
                       <h3 className="text-electric-400 text-sm font-bold uppercase border-b border-white/5 pb-2 mb-4">English Text</h3>
+                      {/* Main Texts English */}
                       <input 
                         className="w-full bg-navy-900 border border-white/10 rounded-lg p-3 text-white"
                         placeholder="Title Part 1"
@@ -244,6 +288,45 @@ const Content = () => {
                       />
                   </div>
               </div>
+
+              {/* Badges Section */}
+              <div className="border-t border-white/5 pt-6 mt-4">
+                  <h3 className="text-electric-400 text-sm font-bold uppercase mb-4">Floating Badges (الشارات العائمة)</h3>
+                  
+                  {/* Badge 1 (AI) */}
+                  <div className="bg-navy-900/50 p-4 rounded-lg mb-4">
+                      <h4 className="text-white text-xs mb-2 font-bold">Badge 1 (Top/Left - AI)</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Title AR" value={heroData.badge1Title?.ar || ''} onChange={e => setHeroData({...heroData, badge1Title: {...heroData.badge1Title, ar: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Title EN" value={heroData.badge1Title?.en || ''} onChange={e => setHeroData({...heroData, badge1Title: {...heroData.badge1Title, en: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Sub AR" value={heroData.badge1Sub?.ar || ''} onChange={e => setHeroData({...heroData, badge1Sub: {...heroData.badge1Sub, ar: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Sub EN" value={heroData.badge1Sub?.en || ''} onChange={e => setHeroData({...heroData, badge1Sub: {...heroData.badge1Sub, en: e.target.value} as any})} />
+                      </div>
+                  </div>
+
+                  {/* Badge 2 (Network) */}
+                  <div className="bg-navy-900/50 p-4 rounded-lg mb-4">
+                      <h4 className="text-white text-xs mb-2 font-bold">Badge 2 (Bottom/Right - Network)</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Title AR" value={heroData.badge2Title?.ar || ''} onChange={e => setHeroData({...heroData, badge2Title: {...heroData.badge2Title, ar: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Title EN" value={heroData.badge2Title?.en || ''} onChange={e => setHeroData({...heroData, badge2Title: {...heroData.badge2Title, en: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Sub AR" value={heroData.badge2Sub?.ar || ''} onChange={e => setHeroData({...heroData, badge2Sub: {...heroData.badge2Sub, ar: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Sub EN" value={heroData.badge2Sub?.en || ''} onChange={e => setHeroData({...heroData, badge2Sub: {...heroData.badge2Sub, en: e.target.value} as any})} />
+                      </div>
+                  </div>
+
+                  {/* Badge 3 (Automation - NEW) */}
+                  <div className="bg-navy-900/50 p-4 rounded-lg">
+                      <h4 className="text-white text-xs mb-2 font-bold flex items-center gap-2"><Zap size={14} className="text-fuchsia-500" /> Badge 3 (New - Automation)</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Title AR" value={heroData.badge3Title?.ar || ''} onChange={e => setHeroData({...heroData, badge3Title: {...heroData.badge3Title, ar: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Title EN" value={heroData.badge3Title?.en || ''} onChange={e => setHeroData({...heroData, badge3Title: {...heroData.badge3Title, en: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Sub AR" value={heroData.badge3Sub?.ar || ''} onChange={e => setHeroData({...heroData, badge3Sub: {...heroData.badge3Sub, ar: e.target.value} as any})} />
+                          <input className="bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" placeholder="Sub EN" value={heroData.badge3Sub?.en || ''} onChange={e => setHeroData({...heroData, badge3Sub: {...heroData.badge3Sub, en: e.target.value} as any})} />
+                      </div>
+                  </div>
+              </div>
+
               <div>
                    <h3 className="text-white text-sm font-bold mb-2">رابط الصورة الشخصية</h3>
                    <input 
@@ -346,45 +429,47 @@ const Content = () => {
                </div>
                
                <div className="border-t border-white/5 pt-6 space-y-6">
-                   <h3 className="text-white font-bold">الأدوار المجتمعية</h3>
-                   {['role1', 'role2', 'role3'].map((roleKey, idx) => (
-                       <div key={roleKey} className="bg-navy-900/50 p-4 rounded-lg border border-white/5">
-                           <div className="grid md:grid-cols-2 gap-4">
-                               <div>
-                                   <label className="text-xs text-gray-500 block mb-1">Role {idx+1} Title (AR)</label>
-                                   <input className="w-full bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" value={(communityData.roles as any)[roleKey].title.ar} 
-                                   onChange={e => {
-                                       const newRoles = {...communityData.roles};
-                                       (newRoles as any)[roleKey].title.ar = e.target.value;
-                                       setCommunityData({...communityData, roles: newRoles});
-                                   }} />
-                                    <label className="text-xs text-gray-500 block mb-1 mt-2">Description (AR)</label>
-                                   <input className="w-full bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" value={(communityData.roles as any)[roleKey].desc.ar} 
-                                   onChange={e => {
-                                       const newRoles = {...communityData.roles};
-                                       (newRoles as any)[roleKey].desc.ar = e.target.value;
-                                       setCommunityData({...communityData, roles: newRoles});
-                                   }} />
+                   <div className="flex items-center justify-between mb-4">
+                       <h3 className="text-white font-bold">الأدوار المجتمعية</h3>
+                       <button onClick={() => { 
+                            setEditType('communityRole'); 
+                            setCurrentItem({ title: {ar:'', en:''}, description: {ar:'', en:''}, iconName: 'Users' }); 
+                            setIsEditing(true); 
+                        }} 
+                        className="bg-electric-600/20 text-electric-400 hover:bg-electric-600 hover:text-white px-3 py-1.5 rounded-lg flex items-center gap-2 text-sm font-bold transition-all"
+                       >
+                           <Plus size={14} /> إضافة دور جديد
+                       </button>
+                   </div>
+                   
+                   <div className="grid gap-3">
+                       {communityData.roles && communityData.roles.map((role, idx) => {
+                           const Icon = getIcon(role.iconName);
+                           return (
+                               <div key={role.id || idx} className="bg-navy-900/50 p-4 rounded-lg border border-white/5 flex items-center justify-between gap-4">
+                                   <div className="flex items-center gap-4">
+                                       <div className="w-10 h-10 bg-navy-800 rounded-full flex items-center justify-center text-gray-400 border border-white/5">
+                                           <Icon size={18} />
+                                       </div>
+                                       <div>
+                                           <h4 className="text-white text-sm font-bold">{role.title.ar}</h4>
+                                           <p className="text-xs text-gray-500">{role.description.ar}</p>
+                                       </div>
+                                   </div>
+                                   <div className="flex items-center gap-2">
+                                       <button onClick={() => { setEditType('communityRole'); setCurrentItem(role); setIsEditing(true); }} className="p-2 text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"><Edit2 size={16} /></button>
+                                       <button onClick={() => handleCommunityRoleDelete(role.id)} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"><Trash2 size={16} /></button>
+                                   </div>
                                </div>
-                               <div>
-                                   <label className="text-xs text-gray-500 block mb-1">Role {idx+1} Title (EN)</label>
-                                   <input className="w-full bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" value={(communityData.roles as any)[roleKey].title.en} 
-                                   onChange={e => {
-                                       const newRoles = {...communityData.roles};
-                                       (newRoles as any)[roleKey].title.en = e.target.value;
-                                       setCommunityData({...communityData, roles: newRoles});
-                                   }} />
-                                   <label className="text-xs text-gray-500 block mb-1 mt-2">Description (EN)</label>
-                                   <input className="w-full bg-navy-800 border border-white/10 rounded p-2 text-white text-sm" value={(communityData.roles as any)[roleKey].desc.en} 
-                                   onChange={e => {
-                                       const newRoles = {...communityData.roles};
-                                       (newRoles as any)[roleKey].desc.en = e.target.value;
-                                       setCommunityData({...communityData, roles: newRoles});
-                                   }} />
-                               </div>
+                           );
+                       })}
+                       
+                       {(!communityData.roles || communityData.roles.length === 0) && (
+                           <div className="text-center py-6 text-gray-500 text-sm border border-dashed border-white/10 rounded-lg">
+                               لا توجد أدوار مضافة حالياً
                            </div>
-                       </div>
-                   ))}
+                       )}
+                   </div>
                </div>
 
                <button onClick={saveCommunity} className="w-full bg-electric-600 hover:bg-electric-500 text-white font-bold py-3 rounded-lg flex justify-center gap-2">
@@ -537,8 +622,8 @@ const Content = () => {
                           </>
                       )}
 
-                      {/* Expertise/AI Common Fields (Multi-lang) */}
-                      {(editType === 'expertise' || editType === 'ai') && (
+                      {/* Expertise/AI/CommunityRole Common Fields (Multi-lang) */}
+                      {(editType === 'expertise' || editType === 'ai' || editType === 'communityRole') && (
                           <>
                              <div className="grid grid-cols-2 gap-4">
                                 <div>
