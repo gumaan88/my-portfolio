@@ -149,7 +149,7 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="order-1 md:order-2 flex justify-center relative"
+          className="order-1 md:order-2 flex justify-center relative mt-8 md:mt-0"
         >
           {/* Tech Rings Animation */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -176,29 +176,29 @@ const Hero: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-electric-500/10 to-transparent w-full h-[20%] animate-[scan_3s_linear_infinite] pointer-events-none"></div>
              </div>
 
-             {/* Floating 3D Elements */}
+             {/* Floating 3D Elements - Adjusted for Mobile */}
              <motion.div 
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className={`absolute top-10 ${dir === 'rtl' ? '-right-8' : '-left-8'} bg-navy-800/90 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]`}
+                className={`absolute top-2 md:top-10 ${dir === 'rtl' ? '-right-2 md:-right-8' : '-left-2 md:-left-8'} z-20 bg-navy-800/90 backdrop-blur-xl p-2 md:p-4 rounded-xl md:rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] min-w-[120px] md:min-w-[140px]`}
              >
-                <div className="flex items-center gap-3 mb-1">
-                   <div className="p-2 bg-electric-500/20 rounded-lg text-electric-400"><Cpu size={18} /></div>
-                   <span className="text-electric-400 text-xs font-bold tracking-wider">AI CORE</span>
+                <div className="flex items-center gap-2 md:gap-3 mb-1">
+                   <div className="p-1.5 md:p-2 bg-electric-500/20 rounded-lg text-electric-400"><Cpu className="w-4 h-4 md:w-[18px] md:h-[18px]" /></div>
+                   <span className="text-electric-400 text-[10px] md:text-xs font-bold tracking-wider">AI CORE</span>
                 </div>
-                <div className="text-white text-sm font-bold">{t.hero.badge1Sub}</div>
+                <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge1Sub}</div>
              </motion.div>
 
              <motion.div 
                 animate={{ y: [0, 15, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className={`absolute bottom-20 ${dir === 'rtl' ? '-left-8' : '-right-8'} bg-navy-800/90 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]`}
+                className={`absolute bottom-8 md:bottom-20 ${dir === 'rtl' ? '-left-2 md:-left-8' : '-right-2 md:-right-8'} z-20 bg-navy-800/90 backdrop-blur-xl p-2 md:p-4 rounded-xl md:rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] min-w-[120px] md:min-w-[140px]`}
              >
-                <div className="flex items-center gap-3 mb-1">
-                   <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400"><Zap size={18} /></div>
-                   <span className="text-blue-400 text-xs font-bold tracking-wider">NETWORK</span>
+                <div className="flex items-center gap-2 md:gap-3 mb-1">
+                   <div className="p-1.5 md:p-2 bg-blue-500/20 rounded-lg text-blue-400"><Zap className="w-4 h-4 md:w-[18px] md:h-[18px]" /></div>
+                   <span className="text-blue-400 text-[10px] md:text-xs font-bold tracking-wider">NETWORK</span>
                 </div>
-                <div className="text-white text-sm font-bold">{t.hero.badge2Sub}</div>
+                <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge2Sub}</div>
              </motion.div>
           </div>
         </motion.div>
