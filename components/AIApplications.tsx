@@ -33,19 +33,17 @@ const AIApplications: React.FC = () => {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-electric-600/5 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-electric-400 font-medium mb-2">
+        <div className="mb-16">
+            <div className="flex items-center gap-2 text-electric-400 font-medium mb-3">
               <Sparkles size={18} />
               <span>{t.aiSolutions.badge}</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               {t.aiSolutions.title}
             </h2>
-          </div>
-          <p className="text-gray-400 max-w-md text-sm md:text-base leading-relaxed">
-            {t.aiSolutions.description}
-          </p>
+            <p className="text-gray-400 max-w-2xl text-lg leading-relaxed opacity-90">
+              {t.aiSolutions.description}
+            </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
