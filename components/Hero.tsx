@@ -176,61 +176,53 @@ const Hero: React.FC = () => {
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-electric-500/10 to-transparent w-full h-[20%] animate-[scan_3s_linear_infinite] pointer-events-none"></div>
                </div>
 
-               {/* --- DESKTOP FLOATING BADGES (Hidden on Mobile) --- */}
+               {/* --- FLOATING BADGES (Responsive) --- */}
+               {/* Badge 1: AI CORE */}
+               {/* Desktop: Top Corner. Mobile: Middle Side to avoid face. */}
                <motion.div 
                   animate={{ y: [0, -15, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className={`hidden md:block absolute top-10 ${dir === 'rtl' ? '-right-8' : '-left-8'} z-20 bg-navy-800/90 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] min-w-[140px]`}
+                  className={`
+                    absolute z-20 bg-navy-800/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] 
+                    rounded-xl md:rounded-2xl p-2 md:p-4 
+                    min-w-[120px] md:min-w-[140px]
+                    scale-75 md:scale-100 origin-center
+                    /* Mobile Positioning: Approx 55% from top to clear face */
+                    top-[55%] md:top-10 
+                    /* RTL/LTR Logic */
+                    ${dir === 'rtl' ? '-right-4 md:-right-8' : '-left-4 md:-left-8'}
+                  `}
                >
-                  <div className="flex items-center gap-3 mb-1">
-                     <div className="p-2 bg-electric-500/20 rounded-lg text-electric-400"><Cpu size={18} /></div>
-                     <span className="text-electric-400 text-xs font-bold tracking-wider">AI CORE</span>
+                  <div className="flex items-center gap-2 md:gap-3 mb-1">
+                     <div className="p-1.5 md:p-2 bg-electric-500/20 rounded-lg text-electric-400"><Cpu size={18} /></div>
+                     <span className="text-electric-400 text-[10px] md:text-xs font-bold tracking-wider">AI CORE</span>
                   </div>
-                  <div className="text-white text-sm font-bold">{t.hero.badge1Sub}</div>
+                  <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge1Sub}</div>
                </motion.div>
 
+               {/* Badge 2: NETWORK */}
+               {/* Desktop: Bottom Corner. Mobile: Bottom Corner. */}
                <motion.div 
                   animate={{ y: [0, 15, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                  className={`hidden md:block absolute bottom-20 ${dir === 'rtl' ? '-left-8' : '-right-8'} z-20 bg-navy-800/90 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] min-w-[140px]`}
+                  className={`
+                    absolute z-20 bg-navy-800/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] 
+                    rounded-xl md:rounded-2xl p-2 md:p-4 
+                    min-w-[120px] md:min-w-[140px]
+                    scale-75 md:scale-100 origin-center
+                    bottom-0 md:bottom-20
+                    /* RTL/LTR Logic: Opposite side of Badge 1 */
+                    ${dir === 'rtl' ? '-left-4 md:-left-8' : '-right-4 md:-right-8'}
+                  `}
                >
-                  <div className="flex items-center gap-3 mb-1">
-                     <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400"><Zap size={18} /></div>
-                     <span className="text-blue-400 text-xs font-bold tracking-wider">NETWORK</span>
+                  <div className="flex items-center gap-2 md:gap-3 mb-1">
+                     <div className="p-1.5 md:p-2 bg-blue-500/20 rounded-lg text-blue-400"><Zap size={18} /></div>
+                     <span className="text-blue-400 text-[10px] md:text-xs font-bold tracking-wider">NETWORK</span>
                   </div>
-                  <div className="text-white text-sm font-bold">{t.hero.badge2Sub}</div>
+                  <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge2Sub}</div>
                </motion.div>
             </div>
           </motion.div>
-          
-          {/* --- MOBILE STATS ROW (Shown below image) --- */}
-          <div className="md:hidden flex gap-3 mt-10 w-full justify-between max-w-xs relative z-20">
-             <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="flex-1 bg-navy-800/80 backdrop-blur-md border border-white/10 rounded-xl p-3 flex flex-col items-center text-center shadow-lg"
-             >
-                 <div className="p-2 bg-electric-500/20 rounded-full text-electric-400 mb-2">
-                   <Cpu size={16} />
-                 </div>
-                 <div className="text-[10px] text-electric-400 font-bold tracking-wider mb-0.5">AI CORE</div>
-                 <div className="text-xs text-white font-bold leading-tight">{t.hero.badge1Sub}</div>
-             </motion.div>
-
-             <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-                className="flex-1 bg-navy-800/80 backdrop-blur-md border border-white/10 rounded-xl p-3 flex flex-col items-center text-center shadow-lg"
-             >
-                 <div className="p-2 bg-blue-500/20 rounded-full text-blue-400 mb-2">
-                   <Zap size={16} />
-                 </div>
-                 <div className="text-[10px] text-blue-400 font-bold tracking-wider mb-0.5">NETWORK</div>
-                 <div className="text-xs text-white font-bold leading-tight">{t.hero.badge2Sub}</div>
-             </motion.div>
-          </div>
         </div>
       </div>
     </section>
