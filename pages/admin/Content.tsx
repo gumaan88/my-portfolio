@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { Project, HeroContent, Service, AISolution, CommunityContent } from '../../types';
-import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Layout, Zap, Users, Monitor, FileText, CheckCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon, Layout, Zap, Users, Monitor, FileText, CheckCircle, PlusCircle } from 'lucide-react';
 import { CONTENT } from '../../constants';
 import { iconOptions, getIcon } from '../../utils/iconMapper';
 
@@ -391,21 +391,37 @@ const Content = () => {
           </div>
       )}
 
-      {/* --- PROJECTS TAB (Previous logic simplified) --- */}
+      {/* --- PROJECTS TAB --- */}
       {!loading && activeTab === 'projects' && (
           <div>
-            <button onClick={() => { setEditType('project'); setCurrentItem({ title: '', category: '', description: '', image: '' }); setIsEditing(true); }} className="mb-4 bg-electric-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold"><Plus size={16} /> مشروع جديد</button>
+            <button onClick={() => { 
+                setEditType('project'); 
+                setCurrentItem({ title: '', category: '', description: '', image: '', stats: [] }); 
+                setIsEditing(true); 
+            }} className="mb-4 bg-electric-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-bold hover:bg-electric-500">
+                <Plus size={16} /> مشروع جديد
+            </button>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                  {projects.map(p => (
                      <div key={p.id} className="bg-navy-800 border border-white/5 rounded-xl overflow-hidden group">
-                         <img src={p.image} className="h-32 w-full object-cover" />
+                         <div className="h-32 w-full relative">
+                             <img src={p.image} className="w-full h-full object-cover" />
+                             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all"></div>
+                         </div>
                          <div className="p-4 relative">
-                             <div className="absolute top-2 left-2 flex gap-1 bg-black/50 p-1 rounded backdrop-blur">
-                                 <button onClick={() => { setEditType('project'); setCurrentItem(p); setIsEditing(true); }} className="p-1 hover:text-blue-400"><Edit2 size={14}/></button>
-                                 <button onClick={() => p.id && handleDelete('projects', p.id)} className="p-1 hover:text-red-400"><Trash2 size={14}/></button>
+                             <div className="absolute top-[-40px] left-2 flex gap-1 bg-black/70 p-1.5 rounded-lg backdrop-blur">
+                                 <button onClick={() => { setEditType('project'); setCurrentItem(p); setIsEditing(true); }} className="p-1 text-blue-400 hover:text-white"><Edit2 size={16}/></button>
+                                 <button onClick={() => p.id && handleDelete('projects', p.id)} className="p-1 text-red-400 hover:text-white"><Trash2 size={16}/></button>
                              </div>
                              <h4 className="font-bold text-white truncate">{p.title}</h4>
-                             <p className="text-xs text-gray-400 truncate">{p.category}</p>
+                             <p className="text-xs text-electric-400 mb-2">{p.category}</p>
+                             <div className="flex flex-wrap gap-2">
+                                 {p.stats && p.stats.map((s, i) => (
+                                     <span key={i} className="text-[10px] bg-white/5 border border-white/10 px-2 py-0.5 rounded text-gray-400">
+                                         {s.label}: {s.value}
+                                     </span>
+                                 ))}
+                             </div>
                          </div>
                      </div>
                  ))}
@@ -415,20 +431,107 @@ const Content = () => {
 
       {/* --- EDIT MODAL --- */}
       {isEditing && (
-          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-              <div className="bg-navy-800 rounded-2xl p-6 w-full max-w-2xl border border-white/10 max-h-[90vh] overflow-y-auto">
-                  <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-xl font-bold text-white">تعديل / إضافة عنصر</h2>
-                      <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-white"><X /></button>
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+              <div className="bg-navy-800 rounded-2xl p-6 w-full max-w-2xl border border-white/10 max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+                  <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+                      <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                          <Edit2 size={20} className="text-electric-500"/> 
+                          {editType === 'project' ? 'إدارة المشروع' : 'تعديل المحتوى'}
+                      </h2>
+                      <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-white bg-white/5 p-2 rounded-lg hover:bg-white/10"><X size={20} /></button>
                   </div>
+                  
                   <form onSubmit={handleModalSave} className="space-y-4">
                       {/* Project Fields */}
                       {editType === 'project' && (
                           <>
-                            <input required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="عنوان المشروع" value={currentItem.title} onChange={e => setCurrentItem({...currentItem, title: e.target.value})} />
-                            <input required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="التصنيف" value={currentItem.category} onChange={e => setCurrentItem({...currentItem, category: e.target.value})} />
-                            <input required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="رابط الصورة" value={currentItem.image} onChange={e => setCurrentItem({...currentItem, image: e.target.value})} />
-                            <textarea required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="الوصف" value={currentItem.description} onChange={e => setCurrentItem({...currentItem, description: e.target.value})} />
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-gray-400 text-sm mb-1 block">عنوان المشروع</label>
+                                    <input required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="مثلاً: نظام إدارة الشبكات" value={currentItem.title} onChange={e => setCurrentItem({...currentItem, title: e.target.value})} />
+                                </div>
+                                <div>
+                                    <label className="text-gray-400 text-sm mb-1 block">التصنيف</label>
+                                    <input required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="مثلاً: AI & Automation" value={currentItem.category} onChange={e => setCurrentItem({...currentItem, category: e.target.value})} />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label className="text-gray-400 text-sm mb-1 block">رابط الصورة</label>
+                                <input required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white dir-ltr" placeholder="https://..." value={currentItem.image} onChange={e => setCurrentItem({...currentItem, image: e.target.value})} />
+                            </div>
+
+                            <div>
+                                <label className="text-gray-400 text-sm mb-1 block">الوصف</label>
+                                <textarea required className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white h-24" placeholder="وصف مختصر للمشروع..." value={currentItem.description} onChange={e => setCurrentItem({...currentItem, description: e.target.value})} />
+                            </div>
+
+                            {/* --- STATS MANAGER (New Feature) --- */}
+                            <div className="bg-navy-900/50 p-4 rounded-xl border border-white/10">
+                                <div className="flex justify-between items-center mb-3">
+                                    <label className="text-sm font-bold text-white flex items-center gap-2">
+                                        <BarChart3Icon /> إحصائيات المشروع
+                                    </label>
+                                    <button 
+                                        type="button"
+                                        onClick={() => {
+                                            const newStats = [...(currentItem.stats || []), { label: '', value: '' }];
+                                            setCurrentItem({ ...currentItem, stats: newStats });
+                                        }}
+                                        className="text-xs bg-electric-600 hover:bg-electric-500 px-3 py-1.5 rounded-lg text-white flex items-center gap-1 transition-colors"
+                                    >
+                                        <PlusCircle size={14} /> إضافة إحصائية
+                                    </button>
+                                </div>
+                                
+                                {(!currentItem.stats || currentItem.stats.length === 0) && (
+                                    <div className="text-center py-4 text-gray-500 text-sm border border-dashed border-white/10 rounded-lg">
+                                        لا توجد إحصائيات مضافة لهذا المشروع
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    {(currentItem.stats || []).map((stat: any, idx: number) => (
+                                        <div key={idx} className="flex gap-2 animate-in fade-in slide-in-from-top-1">
+                                            <div className="flex-1">
+                                                <input 
+                                                    className="w-full bg-navy-800 border border-white/10 rounded p-2 text-white text-sm focus:border-electric-500 outline-none" 
+                                                    placeholder="العنوان (مثلاً: Uptime)"
+                                                    value={stat.label}
+                                                    onChange={(e) => {
+                                                        const newStats = [...currentItem.stats];
+                                                        newStats[idx].label = e.target.value;
+                                                        setCurrentItem({ ...currentItem, stats: newStats });
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <input 
+                                                    className="w-full bg-navy-800 border border-white/10 rounded p-2 text-white text-sm focus:border-electric-500 outline-none dir-ltr text-right" 
+                                                    placeholder="القيمة (مثلاً: 99.9%)"
+                                                    value={stat.value}
+                                                    onChange={(e) => {
+                                                        const newStats = [...currentItem.stats];
+                                                        newStats[idx].value = e.target.value;
+                                                        setCurrentItem({ ...currentItem, stats: newStats });
+                                                    }}
+                                                />
+                                            </div>
+                                            <button 
+                                                type="button"
+                                                onClick={() => {
+                                                    const newStats = currentItem.stats.filter((_: any, i: number) => i !== idx);
+                                                    setCurrentItem({ ...currentItem, stats: newStats });
+                                                }}
+                                                className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white p-2 rounded-lg transition-colors"
+                                                title="حذف"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                           </>
                       )}
 
@@ -451,12 +554,12 @@ const Content = () => {
                              {/* Icon Selector */}
                              <div>
                                  <label className="text-sm text-gray-400 mb-2 block">الأيقونة</label>
-                                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 bg-navy-900 rounded-lg">
+                                 <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 bg-navy-900 rounded-lg custom-scrollbar border border-white/10">
                                      {iconOptions.map(iconName => {
                                          const Icon = getIcon(iconName);
                                          return (
                                             <button key={iconName} type="button" onClick={() => setCurrentItem({...currentItem, iconName})} 
-                                                className={`p-2 rounded-lg border ${currentItem.iconName === iconName ? 'bg-electric-600 border-electric-400 text-white' : 'border-white/5 text-gray-400 hover:bg-white/5'}`}>
+                                                className={`p-2 rounded-lg border transition-all ${currentItem.iconName === iconName ? 'bg-electric-600 border-electric-400 text-white scale-110' : 'border-white/5 text-gray-400 hover:bg-white/5'}`}>
                                                 <Icon size={20} />
                                             </button>
                                          )
@@ -467,7 +570,7 @@ const Content = () => {
                              {/* Expertise Tags */}
                              {editType === 'expertise' && (
                                  <div>
-                                     <label className="text-sm text-gray-400">الوسوم (مفصولة بفاصلة)</label>
+                                     <label className="text-sm text-gray-400 mb-1 block">الوسوم (مفصولة بفاصلة)</label>
                                      <input className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" 
                                         placeholder="LLMs, Strategy, etc."
                                         value={currentItem.tags.join(', ')} 
@@ -479,16 +582,24 @@ const Content = () => {
                              {/* AI Impact */}
                              {editType === 'ai' && (
                                   <div className="grid grid-cols-2 gap-4">
-                                      <input className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="الأثر (عربي)" value={currentItem.impact.ar} onChange={e => setCurrentItem({...currentItem, impact: {...currentItem.impact, ar: e.target.value}})} />
-                                      <input className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="Impact (English)" value={currentItem.impact.en} onChange={e => setCurrentItem({...currentItem, impact: {...currentItem.impact, en: e.target.value}})} />
+                                      <div>
+                                        <label className="text-xs text-gray-400 block mb-1">الأثر (عربي)</label>
+                                        <input className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="مثلاً: توفير 50%" value={currentItem.impact.ar} onChange={e => setCurrentItem({...currentItem, impact: {...currentItem.impact, ar: e.target.value}})} />
+                                      </div>
+                                      <div>
+                                        <label className="text-xs text-gray-400 block mb-1">Impact (English)</label>
+                                        <input className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" placeholder="e.g. 50% Savings" value={currentItem.impact.en} onChange={e => setCurrentItem({...currentItem, impact: {...currentItem.impact, en: e.target.value}})} />
+                                      </div>
                                   </div>
                              )}
                           </>
                       )}
 
-                      <button type="submit" className="w-full bg-electric-600 hover:bg-electric-500 text-white font-bold py-3 rounded-lg flex justify-center gap-2">
-                        <Save size={18} /> حفظ
-                      </button>
+                      <div className="pt-4 border-t border-white/5">
+                        <button type="submit" className="w-full bg-electric-600 hover:bg-electric-500 text-white font-bold py-3 rounded-lg flex justify-center gap-2 transition-all shadow-lg shadow-electric-500/20">
+                            <Save size={18} /> حفظ البيانات
+                        </button>
+                      </div>
                   </form>
               </div>
           </div>
@@ -496,5 +607,10 @@ const Content = () => {
     </div>
   );
 };
+
+// Helper Icon for Stats Label
+const BarChart3Icon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+);
 
 export default Content;
