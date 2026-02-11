@@ -19,13 +19,14 @@ const Footer: React.FC = () => {
           {t.footer.tagline}
         </p>
         
-        {/* Discreet Admin Login Link */}
+        {/* Visible Admin Login Link */}
         <button 
           onClick={() => navigate('/login')}
-          className="p-2 opacity-20 hover:opacity-100 transition-opacity text-gray-500 hover:text-electric-400"
+          className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-gray-500 hover:text-electric-400 transition-all text-xs border border-white/5"
           title="Admin Login"
         >
-          <Lock size={14} />
+          <Lock size={12} />
+          <span>Admin Login</span>
         </button>
       </div>
     </footer>
