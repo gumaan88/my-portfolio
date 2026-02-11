@@ -1,13 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Download } from 'lucide-react';
 import { HERO_IMAGE_URL, CONTENT } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { HeroContent } from '../types';
 
 const Hero: React.FC = () => {
   const { language, dir } = useLanguage();
   const t = CONTENT[language];
   const ArrowIcon = dir === 'rtl' ? ArrowLeft : ArrowRight;
+
+  const [content, setContent] = useState<HeroContent | null>(null);
+
+  useEffect(() => {
+    const fetchHero = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'content', 'hero'));
+        if (docSnap.exists()) {
+          setContent(docSnap.data() as HeroContent);
+        }
+      } catch (e) {
+        console.error("Hero fetch error", e);
+      }
+    };
+    fetchHero();
+  }, []);
+
+  // Helpers to get correct lang string, fallback to constants
+  const getStr = (field: keyof HeroContent, subField?: string) => {
+    if (content && content[field]) {
+      // @ts-ignore
+      return content[field][language] || CONTENT[language].hero[subField || field];
+    }
+    // @ts-ignore
+    return CONTENT[language].hero[subField || field];
+  };
+
+  const heroImage = content?.image || HERO_IMAGE_URL;
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center pt-20 overflow-hidden" dir={dir}>
@@ -30,17 +61,17 @@ const Hero: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-electric-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-electric-500"></span>
             </span>
-            {t.hero.status}
+            {getStr('status')}
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
-            {t.hero.titlePart1} <span className="text-transparent bg-clip-text bg-gradient-to-l from-electric-400 to-blue-600">{t.hero.titleHighlight}</span>
+            {getStr('titlePart1')} <span className="text-transparent bg-clip-text bg-gradient-to-l from-electric-400 to-blue-600">{getStr('titleHighlight')}</span>
             <br />
-            {t.hero.titlePart2}
+            {getStr('titlePart2')}
           </h1>
           
           <p className="text-lg text-gray-400 mb-8 max-w-xl mx-auto md:mx-0 leading-relaxed">
-            {t.hero.description}
+            {getStr('description')}
           </p>
 
           <div className={`flex flex-col sm:flex-row gap-4 justify-center ${dir === 'rtl' ? 'md:justify-start' : 'md:justify-start'}`}>
@@ -75,7 +106,7 @@ const Hero: React.FC = () => {
           <div className="relative w-64 h-64 md:w-96 md:h-96 rounded-full overflow-hidden border-4 border-navy-800 shadow-[0_0_50px_rgba(6,182,212,0.15)] bg-navy-800">
              {/* Using object-top to focus on face if image is tall */}
             <img 
-              src={HERO_IMAGE_URL} 
+              src={heroImage} 
               alt="Eng. Jamaan Saeed" 
               className="w-full h-full object-cover object-top"
             />

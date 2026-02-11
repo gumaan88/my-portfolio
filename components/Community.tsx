@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mic2, Users, Award } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { CONTENT } from '../constants';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { CommunityContent } from '../types';
 
 const Community: React.FC = () => {
   const { language } = useLanguage();
   const t = CONTENT[language];
+  const [data, setData] = useState<CommunityContent | null>(null);
+
+  useEffect(() => {
+    const fetchCommunity = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'content', 'community'));
+        if (docSnap.exists()) {
+          setData(docSnap.data() as CommunityContent);
+        }
+      } catch (e) { console.error(e); }
+    };
+    fetchCommunity();
+  }, []);
+
+  const getStr = (obj: any, path: string) => {
+      // Helper to traverse object path safely and get language
+      if (!data) return path.split('.').reduce((o, i) => o[i], t.community);
+      
+      const val = path.split('.').reduce((o, i) => o ? o[i] : null, data);
+      // @ts-ignore
+      if (val && val[language]) return val[language];
+      
+      // Fallback
+      return path.split('.').reduce((o, i) => o[i], t.community);
+  };
 
   return (
     <section id="community" className="py-24 relative">
@@ -17,10 +45,10 @@ const Community: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                {t.community.title}
+                {data ? data.title[language] : t.community.title}
               </h2>
               <p className="text-gray-300 mb-8 leading-relaxed">
-                {t.community.description}
+                {data ? data.description[language] : t.community.description}
               </p>
 
               <div className="space-y-6">
@@ -29,8 +57,8 @@ const Community: React.FC = () => {
                     <Mic2 size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">{t.community.role1}</h4>
-                    <p className="text-gray-400 text-sm">{t.community.desc1}</p>
+                    <h4 className="text-white font-bold text-lg">{data ? data.roles.role1.title[language] : t.community.role1}</h4>
+                    <p className="text-gray-400 text-sm">{data ? data.roles.role1.desc[language] : t.community.desc1}</p>
                   </div>
                 </div>
                 
@@ -39,8 +67,8 @@ const Community: React.FC = () => {
                     <Users size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">{t.community.role2}</h4>
-                    <p className="text-gray-400 text-sm">{t.community.desc2}</p>
+                    <h4 className="text-white font-bold text-lg">{data ? data.roles.role2.title[language] : t.community.role2}</h4>
+                    <p className="text-gray-400 text-sm">{data ? data.roles.role2.desc[language] : t.community.desc2}</p>
                   </div>
                 </div>
 
@@ -49,8 +77,8 @@ const Community: React.FC = () => {
                     <Award size={20} />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg">{t.community.role3}</h4>
-                    <p className="text-gray-400 text-sm">{t.community.desc3}</p>
+                    <h4 className="text-white font-bold text-lg">{data ? data.roles.role3.title[language] : t.community.role3}</h4>
+                    <p className="text-gray-400 text-sm">{data ? data.roles.role3.desc[language] : t.community.desc3}</p>
                   </div>
                 </div>
               </div>

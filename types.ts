@@ -6,15 +6,16 @@ export interface NavItem {
 }
 
 export interface Service {
-  title: string;
-  description: string;
-  icon: LucideIcon;
+  id?: string;
+  title: { ar: string; en: string };
+  description: { ar: string; en: string };
+  iconName: string; // Changed from icon to iconName for DB storage
   tags: string[];
 }
 
 export interface Project {
   id?: string;
-  title: string;
+  title: string; // Keep simple for projects or upgrade to object if needed. Keeping simple based on previous code.
   category: string;
   description: string;
   image: string;
@@ -22,10 +23,11 @@ export interface Project {
 }
 
 export interface AISolution {
-  title: string;
-  description: string;
-  impact: string;
-  icon: LucideIcon;
+  id?: string;
+  title: { ar: string; en: string };
+  description: { ar: string; en: string };
+  impact: { ar: string; en: string };
+  iconName: string;
 }
 
 export interface SocialLink {
@@ -38,7 +40,7 @@ export interface Comment {
   id: string;
   name: string;
   content: string;
-  createdAt: any; // Timestamp
+  createdAt: any; 
   likes: number;
   dislikes: number;
   replies?: CommentReply[];
@@ -62,6 +64,26 @@ export interface ContactMessage {
 }
 
 export interface SiteRating {
-  rating: number; // 1-5
+  rating: number; 
   count: number;
+}
+
+// New Types for Section Content
+export interface HeroContent {
+  titlePart1: { ar: string; en: string };
+  titleHighlight: { ar: string; en: string };
+  titlePart2: { ar: string; en: string };
+  description: { ar: string; en: string };
+  status: { ar: string; en: string };
+  image: string;
+}
+
+export interface CommunityContent {
+  title: { ar: string; en: string };
+  description: { ar: string; en: string };
+  roles: {
+    role1: { title: { ar: string; en: string }, desc: { ar: string; en: string } };
+    role2: { title: { ar: string; en: string }, desc: { ar: string; en: string } };
+    role3: { title: { ar: string; en: string }, desc: { ar: string; en: string } };
+  }
 }
