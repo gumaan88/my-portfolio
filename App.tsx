@@ -9,6 +9,7 @@ import Community from './components/Community';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import CommentsSection from './components/CommentsSection';
+import WhatsAppFloat from './components/WhatsAppFloat'; // Imported
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
@@ -66,6 +67,7 @@ function PublicApp() {
         <CommentsSection />
         <Contact />
       </main>
+      <WhatsAppFloat />
       <Footer />
     </div>
   );
