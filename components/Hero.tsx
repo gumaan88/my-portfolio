@@ -195,7 +195,7 @@ const Hero: React.FC = () => {
                >
                   <div className="flex items-center gap-2 md:gap-3 mb-1">
                      <div className="p-1.5 md:p-2 bg-electric-500/20 rounded-lg text-electric-400"><Cpu size={18} /></div>
-                     <span className="text-electric-400 text-[10px] md:text-xs font-bold tracking-wider">AI CORE</span>
+                     <span className="text-electric-400 text-[10px] md:text-xs font-bold tracking-wider">APPLIED AI</span>
                   </div>
                   <div className="text-white text-xs md:text-sm font-bold">{t.hero.badge1Sub}</div>
                </motion.div>

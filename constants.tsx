@@ -59,7 +59,7 @@ export const CONTENT = {
       badge1Title: 'AI Expert',
       badge1Sub: 'Neural Networks',
       badge2Title: 'Cert. Engineer',
-      badge2Sub: 'MikroTik & Cisco'
+      badge2Sub: 'MikroTik'
     },
     expertise: {
       title: 'مجالات الخبرة',
@@ -212,7 +212,7 @@ export const CONTENT = {
       badge1Title: 'AI Expert',
       badge1Sub: 'Neural Networks',
       badge2Title: 'Cert. Engineer',
-      badge2Sub: 'MikroTik & Cisco'
+      badge2Sub: 'MikroTik'
     },
     expertise: {
       title: 'Areas of Expertise',
