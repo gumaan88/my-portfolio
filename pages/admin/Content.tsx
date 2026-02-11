@@ -22,6 +22,7 @@ const Content = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editType, setEditType] = useState<'project' | 'expertise' | 'ai' | null>(null);
   const [currentItem, setCurrentItem] = useState<any>(null);
+  const [tagInput, setTagInput] = useState(''); // State for adding new tags
 
   // --- Fetching Logic ---
   useEffect(() => {
@@ -263,6 +264,7 @@ const Content = () => {
               <button onClick={() => { 
                   setEditType('expertise'); 
                   setCurrentItem({ title: {ar:'', en:''}, description: {ar:'', en:''}, tags: [], iconName: 'Brain' }); 
+                  setTagInput('');
                   setIsEditing(true); 
                 }} 
                 className="mb-4 bg-electric-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold hover:bg-electric-500"
@@ -283,7 +285,7 @@ const Content = () => {
                               </div>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <button onClick={() => { setEditType('expertise'); setCurrentItem(item); setIsEditing(true); }} className="text-blue-400 hover:text-white"><Edit2 size={16} /></button>
+                            <button onClick={() => { setEditType('expertise'); setCurrentItem(item); setTagInput(''); setIsEditing(true); }} className="text-blue-400 hover:text-white"><Edit2 size={16} /></button>
                             <button onClick={() => item.id && handleDelete('content/expertise/items', item.id)} className="text-red-400 hover:text-white"><Trash2 size={16} /></button>
                           </div>
                       </div>
@@ -567,15 +569,63 @@ const Content = () => {
                                  </div>
                              </div>
 
-                             {/* Expertise Tags */}
+                             {/* Expertise Tags (Enhanced Builder) */}
                              {editType === 'expertise' && (
                                  <div>
-                                     <label className="text-sm text-gray-400 mb-1 block">الوسوم (مفصولة بفاصلة)</label>
-                                     <input className="w-full bg-navy-900 border border-white/10 rounded p-3 text-white" 
-                                        placeholder="LLMs, Strategy, etc."
-                                        value={currentItem.tags.join(', ')} 
-                                        onChange={e => setCurrentItem({...currentItem, tags: e.target.value.split(',').map((t: string) => t.trim())})} 
-                                     />
+                                     <label className="text-sm text-gray-400 mb-2 block">الوسوم (Tags)</label>
+                                     <div className="flex gap-2 mb-2">
+                                         <input 
+                                             className="flex-1 bg-navy-900 border border-white/10 rounded p-3 text-white"
+                                             placeholder="أكتب الوسم واضغط Enter"
+                                             value={tagInput}
+                                             onChange={e => setTagInput(e.target.value)}
+                                             onKeyDown={e => {
+                                                 if(e.key === 'Enter') {
+                                                     e.preventDefault();
+                                                     if(tagInput.trim()) {
+                                                         const newTags = [...(currentItem.tags || []), tagInput.trim()];
+                                                         setCurrentItem({...currentItem, tags: newTags});
+                                                         setTagInput('');
+                                                     }
+                                                 }
+                                             }}
+                                         />
+                                         <button 
+                                             type="button"
+                                             onClick={() => {
+                                                 if(tagInput.trim()) {
+                                                     const newTags = [...(currentItem.tags || []), tagInput.trim()];
+                                                     setCurrentItem({...currentItem, tags: newTags});
+                                                     setTagInput('');
+                                                 }
+                                             }}
+                                             className="bg-electric-600 hover:bg-electric-500 text-white p-3 rounded-lg"
+                                         >
+                                             <Plus size={20} />
+                                         </button>
+                                     </div>
+                                     
+                                     <div className="flex flex-wrap gap-2 bg-navy-900/50 p-3 rounded-lg border border-white/5 min-h-[50px]">
+                                         {currentItem.tags && currentItem.tags.length > 0 ? (
+                                             currentItem.tags.map((tag: string, index: number) => (
+                                                 <span key={index} className="bg-electric-500/10 border border-electric-500/20 text-electric-400 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                                                     {tag}
+                                                     <button 
+                                                         type="button" 
+                                                         onClick={() => {
+                                                             const newTags = currentItem.tags.filter((_: any, i: number) => i !== index);
+                                                             setCurrentItem({...currentItem, tags: newTags});
+                                                         }}
+                                                         className="hover:text-white hover:bg-red-500/20 rounded-full p-0.5 transition-colors"
+                                                     >
+                                                         <X size={14} />
+                                                     </button>
+                                                 </span>
+                                             ))
+                                         ) : (
+                                             <span className="text-gray-500 text-sm italic">لا توجد وسوم مضافة...</span>
+                                         )}
+                                     </div>
                                  </div>
                              )}
 
