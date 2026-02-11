@@ -20,7 +20,7 @@ import Messages from './pages/admin/Messages';
 import ManageComments from './pages/admin/ManageComments';
 
 // Protected Route Component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-navy-900 text-white">Loading...</div>;
   if (!user) return <Navigate to="/login" />;
