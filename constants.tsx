@@ -51,13 +51,13 @@ export const CONTENT = {
     },
     hero: {
       status: 'متاح للمشاريع والاستشارات',
-      role: 'مستشار تقني',
+      role: ' استشاري التحول الرقمي',
       titleHighlight: 'الذكاء الاصطناعي',
       titlePart1: 'تطبيقات',
       titlePart2: 'والبنية الرقمية المتقدمة',
       description: 'أساعد المؤسسات على تبني المستقبل من خلال دمج حلول الذكاء الاصطناعي، تأمين البنية التحتية للشبكات، وأتمتة العمليات الرقمية لتحقيق أقصى كفاءة.',
-      badge1Title: 'AI Expert',
-      badge1Sub: 'Neural Networks',
+      badge1Title: 'AI',
+      badge1Sub: 'Applied AI',
       badge2Title: 'Cert. Engineer',
       badge2Sub: 'MikroTik'
     },
