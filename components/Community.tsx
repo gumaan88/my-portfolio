@@ -23,18 +23,6 @@ const Community: React.FC = () => {
     fetchCommunity();
   }, []);
 
-  const getStr = (obj: any, path: string) => {
-      // Helper to traverse object path safely and get language
-      if (!data) return path.split('.').reduce((o, i) => o[i], t.community);
-      
-      const val = path.split('.').reduce((o, i) => o ? o[i] : null, data);
-      // @ts-ignore
-      if (val && val[language]) return val[language];
-      
-      // Fallback
-      return path.split('.').reduce((o, i) => o[i], t.community);
-  };
-
   return (
     <section id="community" className="py-24 relative">
       <div className="container mx-auto px-6">
