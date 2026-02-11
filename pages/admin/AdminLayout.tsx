@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, MessageSquare, LogOut, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, MessageSquare, LogOut, FileText, Settings, MessageCircle } from 'lucide-react';
 
 const AdminLayout = () => {
   const { logout } = useAuth();
@@ -15,6 +15,7 @@ const AdminLayout = () => {
   const navItems = [
     { label: 'لوحة القيادة', path: '/admin', icon: LayoutDashboard },
     { label: 'الرسائل', path: '/admin/messages', icon: MessageSquare },
+    { label: 'إدارة التعليقات', path: '/admin/comments', icon: MessageCircle },
     { label: 'إدارة المحتوى', path: '/admin/content', icon: FileText },
     { label: 'الإعدادات', path: '/admin/settings', icon: Settings },
   ];
@@ -22,7 +23,7 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-navy-900 flex" dir="rtl">
       {/* Sidebar */}
-      <aside className="w-64 bg-navy-800 border-l border-white/5 flex flex-col fixed h-full">
+      <aside className="w-64 bg-navy-800 border-l border-white/5 flex flex-col fixed h-full z-20">
         <div className="p-6 border-b border-white/5">
           <h2 className="text-xl font-bold text-white">لوحة التحكم</h2>
           <p className="text-xs text-electric-400 mt-1">v1.0.0 Admin Panel</p>
@@ -60,7 +61,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 mr-64 p-8 overflow-y-auto">
+      <main className="flex-1 mr-64 p-8 overflow-y-auto h-screen">
         <Outlet />
       </main>
     </div>

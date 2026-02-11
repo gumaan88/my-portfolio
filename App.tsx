@@ -17,6 +17,7 @@ import Login from './pages/admin/Login';
 import AdminLayout from './pages/admin/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Messages from './pages/admin/Messages';
+import ManageComments from './pages/admin/ManageComments';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -64,6 +65,7 @@ function App() {
             }>
               <Route index element={<Dashboard />} />
               <Route path="messages" element={<Messages />} />
+              <Route path="comments" element={<ManageComments />} />
               <Route path="content" element={<div className="text-white p-6">Content Management System (Coming Soon)</div>} />
               <Route path="settings" element={<div className="text-white p-6">Settings (Coming Soon)</div>} />
             </Route>
